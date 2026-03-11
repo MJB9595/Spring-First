@@ -3,12 +3,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.CreateMemberRequest;
 import com.example.demo.dto.MemberResponse;
+import com.example.demo.dto.UpdateMemberRequest;
 import com.example.demo.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +32,36 @@ public class MemberController {
                         m.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    @GetMapping("/members/{id}")
+    public MemberResponse findOne(@PathVariable long id){
+        var m = memberService.findById(id);
+
+        return new MemberResponse(
+                m.getId(),
+                m.getName(),
+                m.getEmail(),
+                m.getCreatedAt()
+        );
+    }
+
+    @PatchMapping("/members/{id}")
+    public MemberResponse update(@PathVariable long id,
+                                 @RequestBody UpdateMemberRequest request){
+        var updatedMember = memberService.update(id,request.name(),request.email());
+
+        return new MemberResponse(
+                updatedMember.getId(),
+                updatedMember.getName(),
+                updatedMember.getEmail(),
+                updatedMember.getCreatedAt()
+        );
+    }
+
+    @DeleteMapping("/members/{id}")
+    public void delete(@PathVariable long id){
+        memberService.delete(id);
     }
 
 }
